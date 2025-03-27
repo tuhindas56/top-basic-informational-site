@@ -1,59 +1,11 @@
-const fs = require('fs')
-const http = require('node:http')
 const path = require('path')
-
+const app = require('express')()
 const PORT = process.env.PORT ?? 8080
 
-const server = http.createServer((req, res) => {
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public',  'index.html')))
+app.get('/about', (req, res) => res.sendFile(path.join(__dirname, 'public',  'about.html')))
+app.get('/contact-me', (req, res) => res.sendFile(path.join(__dirname, 'public',  'contact-me.html')))
 
-    res.writeHead(200, { "Content-Type": 'text/html' })
+app.use((req, res, next) => res.status(400).sendFile(path.join(__dirname, 'public',  '404.html')))
 
-    switch(req.url) {
-        case '/' :
-            fs.readFile(path.join(__dirname, 'public',  'index.html'), (error, data) => {
-                if(error) {
-                    res.writeHead(500, { "Content-Type": "text/plain" })
-                    return res.end('An error has occurred.')
-                }
-
-                res.end(data)
-            })
-        break
-
-        case '/about' :
-            fs.readFile(path.join(__dirname, 'public',  'about.html'), (error, data) => {
-                if(error) {
-                    res.writeHead(500, { "Content-Type": "text/plain" })
-                    return res.end('An error has occurred.')
-                }
-
-                res.end(data)
-            })
-        break
-
-        case '/contact-me' :
-            fs.readFile(path.join(__dirname, 'public',  'contact-me.html'), (error, data) => {
-                if(error) {
-                    res.writeHead(500, { "Content-Type": "text/plain" })
-                    return res.end('An error has occurred.')
-                }
-
-                res.end(data)
-            })
-        break
-
-        default :
-            fs.readFile(path.join(__dirname, 'public',  '404.html'), (error, data) => {
-                if(error) {
-                    res.writeHead(500, { "Content-Type": "text/plain" })
-                    return res.end('An error has occurred.')
-                }
-
-                res.end(data)
-            })
-        break
-    }
-
-})
-
-server.listen(PORT, () => console.log(`listening on port ${PORT}`))
+app.listen(PORT, () => console.log(`listening on port ${PORT}`))
